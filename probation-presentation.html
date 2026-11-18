@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Институт пробации в России</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Jost:wght@300..700&display=swap">
+<style>
+html, body { margin: 0; height: 100%; background: #0e2f42; overflow: hidden; }
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; }
+#stage > section { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; }
+#stage > section:not(.on) { display: none; }
+section aside { display: none; }
+x-connector { display: block; }
+#hint { position: fixed; right: 16px; bottom: 12px; font: 14px Arial, sans-serif; color: #f5eedd; opacity: .6; }
+</style>
+<style>
+section {
+  --merino: #f5eedd;
+  --rock-blue: #84b3ce;
+  --venice-blue: #16587b;
+  --venice-deep: #0e2f42;
+  --ink-muted: #3e6f8a;
+  --hairline: rgba(22, 88, 123, 0.25);
+  background: var(--merino);
+  color: var(--venice-blue);
+  font-family: 'Jost', 'Century Gothic', Arial, sans-serif;
+  font-size: 28px;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2 { font-family: 'Yeseva One', Georgia, serif; font-weight: 400; margin: 0; }
+h2 { font-size: 72px; line-height: 1.05; color: var(--venice-blue); }
+
+.eyebrow { font-size: 24px; letter-spacing: 0.12em; color: var(--ink-muted); margin: 0 0 20px; }
+.eyebrow.inv { color: var(--merino); }
+.eyebrow.mt { margin-top: 40px; }
+.thesis { font-size: 36px; line-height: 1.3; margin: 24px 0 0; max-width: 1560px; color: var(--venice-blue); }
+
+/* Cover */
+.cover-row { flex: 1; display: grid; grid-template-columns: 2fr 1fr; }
+.cover-top { background: var(--venice-blue); padding: 128px; display: flex; flex-direction: column; justify-content: flex-end; }
+.cover h1 { font-size: 96px; line-height: 1.05; color: var(--merino); }
+.cover-sub { font-size: 40px; color: var(--rock-blue); margin: 28px 0 0; }
+.cover-num { background: var(--rock-blue); padding: 128px 96px; display: flex; flex-direction: column; justify-content: flex-end; }
+.cover-num .big { font-family: 'Yeseva One', Georgia, serif; font-size: 400px; line-height: 0.85; color: var(--venice-blue); margin: 0; animation: rise 900ms ease-out both; }
+.cover-num .lbl { font-size: 28px; letter-spacing: 0.12em; color: var(--venice-blue); margin: 24px 0 0; }
+.cover-bottom { padding: 44px 128px 52px; display: flex; justify-content: space-between; }
+.meta { font-size: 28px; margin: 0; color: var(--venice-blue); }
+
+/* Statement */
+.statement { background: var(--rock-blue); padding: 128px; justify-content: center; }
+.statement .quote { font-family: 'Yeseva One', Georgia, serif; font-size: 96px; line-height: 1.1; color: var(--venice-blue); margin: 0; max-width: 1560px; animation: rise 800ms ease-out both; }
+.statement .by { font-size: 32px; color: var(--venice-blue); margin: 48px 0 0; animation: fadein 600ms ease-out 500ms both; }
+
+/* Top band (plan, sources) */
+.topband { background: var(--rock-blue); padding: 96px 128px 44px; }
+
+/* Plan */
+.agenda { flex: 1; display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; padding: 48px 128px 72px; }
+.item { display: flex; gap: 28px; border-top: 2px solid var(--hairline); padding: 22px 0; }
+.item .n { font-family: 'Yeseva One', Georgia, serif; font-size: 40px; line-height: 1.1; width: 64px; flex-shrink: 0; margin: 0; }
+.item .t { font-size: 30px; line-height: 1.3; margin: 0; }
+
+/* Shared blocks */
+.main { flex: 1; padding: 104px 128px 56px; display: flex; flex-direction: column; justify-content: space-between; }
+.stack { flex: 1; padding: 96px 128px 56px; display: flex; flex-direction: column; }
+.two { flex: 1; display: grid; grid-template-columns: 1fr 1fr; column-gap: 96px; padding: 104px 128px 56px; }
+.col { display: flex; flex-direction: column; }
+.cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; }
+.cards.mt { margin-top: 48px; }
+.card { border-top: 4px solid var(--venice-blue); padding-top: 24px; animation: rise 600ms ease-out both; }
+.d2 { animation-delay: 150ms; }
+.d3 { animation-delay: 300ms; }
+.d4 { animation-delay: 450ms; }
+.d5 { animation-delay: 600ms; }
+.card .num { font-family: 'Yeseva One', Georgia, serif; font-size: 44px; line-height: 1; margin: 0 0 16px; color: var(--venice-blue); }
+.card .txt { font-size: 28px; line-height: 1.35; margin: 0; color: var(--venice-blue); }
+.band { background: var(--venice-blue); padding: 44px 128px 52px; display: flex; gap: 48px; align-items: flex-start; animation: fadein 600ms ease-out 450ms both; }
+.band-label { font-family: 'Yeseva One', Georgia, serif; font-size: 44px; line-height: 1.1; color: var(--rock-blue); margin: 0; width: 200px; flex-shrink: 0; }
+.band-text { font-size: 32px; line-height: 1.35; color: var(--merino); margin: 0; flex: 1; }
+.foot { padding: 32px 128px 52px; }
+.foot .ft { font-size: 30px; line-height: 1.35; margin: 0; color: var(--venice-blue); }
+
+/* Q1: diagram */
+.split { flex: 1; display: grid; grid-template-columns: 1fr 1fr; }
+.split .left { padding: 128px 64px 128px 128px; display: flex; flex-direction: column; justify-content: space-between; }
+.verdict { background: var(--venice-blue); padding: 36px 40px; animation: fadein 600ms ease-out 700ms both; }
+.verdict .k { font-family: 'Yeseva One', Georgia, serif; font-size: 36px; color: var(--rock-blue); margin: 0 0 12px; }
+.verdict .v { font-size: 28px; line-height: 1.35; color: var(--merino); margin: 0; }
+.diagram { background: var(--rock-blue); position: relative; }
+.node { position: absolute; width: 400px; height: 140px; box-sizing: border-box; padding: 20px 28px; background: var(--merino); display: flex; align-items: center; justify-content: center; animation: pop 500ms ease-out both; }
+.node .nt { font-size: 26px; line-height: 1.3; text-align: center; margin: 0; color: var(--venice-blue); }
+.hub { position: absolute; left: 320px; top: 380px; width: 320px; height: 320px; border-radius: 160px; background: var(--venice-blue); display: flex; align-items: center; justify-content: center; animation: pop 600ms ease-out both; }
+.hub .ht { font-family: 'Yeseva One', Georgia, serif; font-size: 44px; color: var(--merino); margin: 0; }
+.link { color: var(--venice-blue); border-width: 3px; }
+
+/* Q2: versus */
+.vs { display: grid; grid-template-columns: 300px 1fr 1fr; column-gap: 16px; row-gap: 12px; padding: 40px 128px 0; }
+.vs .h { font-family: 'Yeseva One', Georgia, serif; font-size: 44px; line-height: 1.1; margin: 0; padding-bottom: 4px; }
+.vs .crit { font-size: 24px; letter-spacing: 0.08em; line-height: 1.3; color: var(--ink-muted); margin: 0; padding-top: 24px; border-top: 2px solid var(--hairline); }
+.vs .a { background: var(--venice-blue); padding: 24px 32px; animation: rise 600ms ease-out both; }
+.vs .b { background: var(--rock-blue); padding: 24px 32px; animation: rise 600ms ease-out 200ms both; }
+.vs .a .ct { font-size: 28px; line-height: 1.35; margin: 0; color: var(--merino); }
+.vs .b .ct { font-size: 28px; line-height: 1.35; margin: 0; color: var(--venice-blue); }
+
+/* Q3: funnel */
+.pills { display: flex; flex-wrap: wrap; gap: 14px; }
+.pill { font-size: 26px; background: var(--rock-blue); color: var(--venice-blue); padding: 10px 24px; border-radius: 999px; margin: 0; }
+.funnel { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.fb { box-sizing: border-box; padding: 28px 24px; display: flex; justify-content: center; animation: rise 600ms ease-out both; }
+.fb .ft2 { font-size: 28px; line-height: 1.25; text-align: center; margin: 0; }
+.fb1 { width: 100%; background: var(--venice-deep); }
+.fb2 { width: 70%; background: var(--venice-blue); }
+.fb3 { width: 40%; background: var(--rock-blue); }
+.fb1 .ft2, .fb2 .ft2 { color: var(--merino); }
+.fb3 .ft2 { color: var(--venice-blue); }
+.fcap { font-size: 24px; color: var(--ink-muted); margin: 24px 0 0; text-align: center; }
+
+/* Q4: countries */
+.countries { flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.ctry { padding: 48px 64px; display: flex; flex-direction: column; animation: rise 700ms ease-out both; }
+.ctry .code { font-family: 'Yeseva One', Georgia, serif; font-size: 160px; line-height: 0.9; margin: 0 0 24px; }
+.ctry .name { font-family: 'Yeseva One', Georgia, serif; font-size: 40px; line-height: 1.1; margin: 0 0 16px; }
+.ctry .ctxt { font-size: 28px; line-height: 1.35; margin: 0; }
+.c1 { background: var(--rock-blue); }
+.c2 { background: var(--venice-blue); }
+.c3 { background: var(--venice-deep); }
+.c1 .code, .c1 .name, .c1 .ctxt { color: var(--venice-blue); }
+.c2 .code, .c3 .code { color: var(--rock-blue); }
+.c2 .name, .c2 .ctxt, .c3 .name, .c3 .ctxt { color: var(--merino); }
+
+/* Q5: chain */
+.chain { background: var(--venice-blue); margin: 40px -128px 0; padding: 44px 128px 40px; animation: fadein 600ms ease-out both; }
+.links { display: flex; align-items: center; }
+.cn { flex: 1; background: var(--merino); padding: 22px 16px; box-sizing: border-box; display: flex; justify-content: center; }
+.cn.key { background: var(--rock-blue); }
+.cn .cnt { font-size: 26px; line-height: 1.25; text-align: center; margin: 0; color: var(--venice-blue); }
+.gap-link { width: 72px; height: 2px; flex-shrink: 0; color: var(--rock-blue); border-width: 3px; border-style: dashed; }
+.chain-cap { font-size: 28px; line-height: 1.35; color: var(--merino); margin: 28px 0 0; }
+
+/* Q6: register */
+.deep { background: var(--venice-deep); }
+.deep h2, .deep .thesis { color: var(--merino); }
+.iss { display: flex; gap: 24px; border-top: 2px solid rgba(245, 238, 221, 0.25); padding: 20px 0; }
+.iss .n { font-family: 'Yeseva One', Georgia, serif; font-size: 36px; line-height: 1.1; color: var(--rock-blue); width: 56px; flex-shrink: 0; margin: 0; }
+.iss .t { font-size: 28px; line-height: 1.35; color: var(--merino); margin: 0; }
+.issues { margin-top: 40px; }
+.rec { background: var(--merino); align-self: center; animation: rise 700ms ease-out 200ms both; }
+.rec-h { background: var(--venice-blue); padding: 22px 36px; }
+.rec-h .rh { font-size: 24px; letter-spacing: 0.12em; color: var(--merino); margin: 0; }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px 36px; border-bottom: 2px solid var(--hairline); }
+.row .k { font-size: 26px; color: var(--venice-blue); margin: 0; }
+.tag { font-size: 24px; background: var(--rock-blue); color: var(--venice-blue); padding: 6px 18px; border-radius: 999px; margin: 0; white-space: nowrap; }
+.tag.ok { background: var(--merino); border: 2px solid var(--venice-blue); }
+.redact { width: 220px; height: 26px; background: var(--venice-blue); }
+.rec-f { background: var(--venice-blue); padding: 24px 36px; }
+.rec-f .rf { font-size: 26px; line-height: 1.35; color: var(--merino); margin: 0; }
+
+/* Q7: timeline */
+.tl { display: grid; grid-template-columns: 1fr 2fr 1.2fr 1.3fr; margin-top: 44px; }
+.st { padding: 28px 32px; animation: fadein 500ms ease-out both; }
+.st .sl { font-size: 24px; letter-spacing: 0.1em; margin: 0 0 6px; }
+.st .sn { font-family: 'Yeseva One', Georgia, serif; font-size: 36px; line-height: 1.1; margin: 0; }
+.s1, .s3 { background: var(--rock-blue); }
+.s2 { background: var(--venice-deep); }
+.s4 { background: var(--venice-blue); }
+.s1 .sl, .s1 .sn, .s3 .sl, .s3 .sn { color: var(--venice-blue); }
+.s2 .sl, .s2 .sn, .s4 .sl, .s4 .sn { color: var(--merino); }
+.losses { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; }
+.loss { border-top: 4px solid var(--venice-deep); padding-top: 20px; animation: rise 600ms ease-out both; }
+.loss .lt { font-family: 'Yeseva One', Georgia, serif; font-size: 34px; line-height: 1.1; margin: 0 0 10px; color: var(--venice-blue); }
+.loss .ld { font-size: 26px; line-height: 1.35; margin: 0; color: var(--venice-blue); }
+
+/* Q8: tiles */
+.tiles { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; gap: 16px; }
+.tile { border: 2px solid var(--venice-blue); padding: 24px 20px; display: flex; flex-direction: column; justify-content: flex-end; animation: fadein 500ms ease-out both; }
+.tile .tt { font-size: 26px; line-height: 1.25; margin: 0; color: var(--venice-blue); }
+.tile.new { background: var(--venice-blue); animation: pop 600ms ease-out 700ms both; }
+.tile.new .tt { color: var(--merino); }
+.tile .plus { font-family: 'Yeseva One', Georgia, serif; font-size: 56px; line-height: 1; color: var(--rock-blue); margin: 0 0 8px; }
+.steps { display: flex; align-items: center; margin-top: 48px; }
+.step { flex: 1; background: var(--rock-blue); padding: 24px 28px; animation: rise 600ms ease-out both; }
+.step .sp { font-size: 28px; line-height: 1.3; margin: 0; color: var(--venice-blue); }
+.arrow { width: 80px; height: 2px; flex-shrink: 0; color: var(--venice-blue); border-width: 3px; }
+
+/* Summary (dark statement slide) */
+.dark { background: var(--venice-blue); }
+.dark .main { justify-content: flex-start; gap: 64px; }
+.dark h2 { color: var(--merino); }
+.dark .card { border-top-color: var(--rock-blue); }
+.dark .card .num { color: var(--rock-blue); }
+.dark .card .txt { color: var(--merino); }
+.cards.rows { row-gap: 56px; }
+
+/* Sources */
+.srcs { flex: 1; padding: 56px 128px 48px; display: flex; flex-direction: column; }
+.src { border-top: 2px solid var(--hairline); padding: 28px 0; display: flex; gap: 28px; }
+.src .n { font-family: 'Yeseva One', Georgia, serif; font-size: 40px; line-height: 1.1; width: 64px; flex-shrink: 0; margin: 0; }
+.src .t { font-size: 32px; line-height: 1.35; margin: 0; }
+.thanks { background: var(--venice-blue); padding: 56px 128px 64px; }
+.thanks .tx { font-family: 'Yeseva One', Georgia, serif; font-size: 64px; line-height: 1.1; color: var(--merino); margin: 0; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+@keyframes fadein { from { opacity: 0; } }
+@keyframes pop { from { opacity: 0; transform: scale(0.85); } }
+</style></head><body><div id="stage">
+<section id="cover" class="cover" data-transition="fade">
+<div class="cover-row">
+<div class="cover-top">
+<p class="eyebrow inv">УГОЛОВНО‑ИСПОЛНИТЕЛЬНОЕ ПРАВО</p>
+<h1>Институт пробации и проблемы ресоциализации</h1>
+<p class="cover-sub">в уголовно‑исполнительном праве России</p>
+</div>
+<div class="cover-num">
+<p class="big">12</p>
+<p class="lbl">ТЕМА СЕМИНАРА</p>
+</div>
+</div>
+<div class="cover-bottom">
+<p class="meta">Дискуссионно‑аналитические вопросы</p>
+<p class="meta">[ФИО, группа]</p>
+</div>
+<aside>Тема выступления — институт пробации и проблемы ресоциализации осуждённых. Разберём восемь дискуссионных вопросов: от правовой природы пробации до её перспектив как основания освобождения от наказания.</aside>
+</section>
+<section id="plan" data-transition="fade">
+<div class="topband">
+<h2>Вопросы для обсуждения</h2>
+</div>
+<div class="agenda">
+<div class="item"><p class="n">1</p><p class="t">Правовая природа института пробации</p></div>
+<div class="item"><p class="n">5</p><p class="t">Межведомственное взаимодействие субъектов пробации</p></div>
+<div class="item"><p class="n">2</p><p class="t">Коллизии УИК РФ и Закона о пробации</p></div>
+<div class="item"><p class="n">6</p><p class="t">Цифровой учёт: Единый реестр лиц</p></div>
+<div class="item"><p class="n">3</p><p class="t">Принцип добровольности пробации</p></div>
+<div class="item"><p class="n">7</p><p class="t">Влияние пенитенциарных условий на десоциализацию</p></div>
+<div class="item"><p class="n">4</p><p class="t">Зарубежный опыт принудительной пробации</p></div>
+<div class="item"><p class="n">8</p><p class="t">Пробация как основание освобождения от наказания</p></div>
+</div>
+<aside>План выступления: восемь вопросов, которые разобьём на четыре блока — правовая природа и коллизии, порядок применения и зарубежный опыт, организация и учёт, ресоциализация и перспективы.</aside>
+</section>
+<section id="idea" class="statement" data-transition="fade">
+<p class="quote">Пробация — мост между наказанием и возвращением в общество.</p>
+<p class="by">Главный вопрос: насколько прочен этот мост сегодня?</p>
+<aside>Прежде чем перейти к вопросам, задам рамку: пробация нужна, чтобы человек не просто отбыл наказание, а вернулся к нормальной жизни. Дальше посмотрим, какие правовые проблемы мешают этому.</aside>
+</section>
+<section id="q1" data-transition="fade">
+<div class="split">
+<div class="left">
+<div>
+<p class="eyebrow">ВОПРОС 1 ИЗ 8</p>
+<h2>Правовая природа пробации</h2>
+<p class="thesis">Пробация — межотраслевой институт, а не «чистый» институт уголовно‑исполнительного права.</p>
+</div>
+<div class="verdict">
+<p class="k">Вывод</p>
+<p class="v">Это комплексный механизм: уголовно‑исполнительные задачи решаются через социальные инструменты.</p>
+</div>
+</div>
+<div class="diagram">
+<x-connector class="link" x1="240" y1="280" x2="372" y2="423" head="none"></x-connector>
+<x-connector class="link" x1="720" y1="280" x2="588" y2="423" head="none"></x-connector>
+<x-connector class="link" x1="240" y1="800" x2="372" y2="657" head="none"></x-connector>
+<x-connector class="link" x1="720" y1="800" x2="588" y2="657" head="none"></x-connector>
+<div class="node" style="left:40px; top:140px;"><p class="nt">Уголовно‑исполнительное право · УИК РФ</p></div>
+<div class="node d2" style="left:520px; top:140px;"><p class="nt">ФЗ № 10‑ФЗ «О пробации в РФ»</p></div>
+<div class="node d3" style="left:40px; top:800px;"><p class="nt">Социальное и трудовое право</p></div>
+<div class="node d4" style="left:520px; top:800px;"><p class="nt">ФСИН, соцзащита, занятость, НКО</p></div>
+<div class="hub"><p class="ht">Пробация</p></div>
+</div>
+</div>
+<aside>Пробация опирается на отдельный федеральный закон, включает инструменты социального и трудового права и реализуется несколькими ведомствами. Поэтому это не институт одной отрасли, а комплексный межотраслевой механизм.</aside>
+</section>
+<section id="q2" data-transition="fade">
+<div class="stack" style="flex:0; padding-bottom:0;">
+<p class="eyebrow">ВОПРОС 2 ИЗ 8</p>
+<h2>Коллизии УИК РФ и ФЗ № 10‑ФЗ</h2>
+<p class="thesis">Два акта описывают одно и то же по‑разному — это снижает эффективность правоприменения.</p>
+</div>
+<div class="vs">
+<div></div>
+<p class="h">УИК РФ</p>
+<p class="h">ФЗ № 10‑ФЗ</p>
+<p class="crit">ТЕРМИНОЛОГИЯ</p>
+<div class="a"><p class="ct">«Средства исправления»: режим, труд, обучение, воспитательная работа</p></div>
+<div class="b"><p class="ct">«Мероприятия ресоциализации, социальной адаптации и реабилитации»</p></div>
+<p class="crit">ОСВОБОЖДЕНИЕ</p>
+<div class="a d2"><p class="ct">Прохождение пробации не входит в критерии исправления</p></div>
+<div class="b d2"><p class="ct">Успешная программа не влечёт последствий для освобождения</p></div>
+<p class="crit">СУБЪЕКТЫ КОНТРОЛЯ</p>
+<div class="a d3"><p class="ct">УИИ и администрация исправительного учреждения</p></div>
+<div class="b d3"><p class="ct">Плюс органы соцзащиты, службы занятости, НКО</p></div>
+</div>
+<div class="foot"><p class="ft"><b>Вывод:</b> нужна гармонизация терминологии и включение пробации в критерии исправления и освобождения.</p></div>
+<aside>Два акта описывают одно и то же разными словами и с разными субъектами. В результате правоприменитель не может учесть результаты пробации при оценке исправления осуждённого.</aside>
+</section>
+<section id="q3" data-transition="fade">
+<div class="two">
+<div class="col">
+<p class="eyebrow">ВОПРОС 3 ИЗ 8</p>
+<h2>Принцип добровольности</h2>
+<p class="thesis">Заявительный порядок снижает охват наиболее уязвимых категорий осуждённых.</p>
+<p class="eyebrow mt">ПОЧЕМУ НЕ ПОДАЮТ ЗАЯВЛЕНИЕ</p>
+<div class="pills">
+<p class="pill">недоверие к государству</p>
+<p class="pill">стигматизация</p>
+<p class="pill">непонимание пользы</p>
+<p class="pill">зависимости, нет жилья</p>
+<p class="pill">никто не помогает с заявлением</p>
+</div>
+</div>
+<div class="col">
+<div class="funnel">
+<div class="fb fb1"><p class="ft2">Осуждённые, которым нужна помощь</p></div>
+<div class="fb fb2 d2"><p class="ft2">Подали заявление</p></div>
+<div class="fb fb3 d3"><p class="ft2">Получили помощь</p></div>
+<p class="fcap">Схема: из системы «выпадают» те, кому помощь нужнее всего</p>
+</div>
+</div>
+</div>
+<div class="band"><p class="band-label">Вывод</p><p class="band-text">Для уязвимых категорий нужны элементы обязательного участия или проактивное предложение помощи.</p></div>
+<aside>Добровольность защищает автономию личности, но на практике отсекает маргинализованных осуждённых. Решение — не отменять принцип, а дополнить его активным предложением помощи со стороны государства.</aside>
+</section>
+<section id="q4" data-transition="fade">
+<div class="stack" style="flex:0; padding-bottom:44px;">
+<p class="eyebrow">ВОПРОС 4 ИЗ 8</p>
+<h2>Зарубежный опыт</h2>
+<p class="thesis">Принудительная пробация по решению суда повышает охват и контроль, но требует гарантий прав личности.</p>
+</div>
+<div class="countries">
+<div class="ctry c1"><p class="code">KZ</p><p class="name">Казахстан</p><p class="ctxt">Пробация при наказаниях без изоляции от общества: надзор сочетается с социальной помощью.</p></div>
+<div class="ctry c2 d2"><p class="code">UK</p><p class="name">Великобритания</p><p class="ctxt">Служба пробации готовит для суда досудебные доклады и контролирует условно осуждённых.</p></div>
+<div class="ctry c3 d3"><p class="code">FR</p><p class="name">Франция</p><p class="ctxt">Судебный контроль сочетает надзор за осуждённым и его социальную поддержку.</p></div>
+</div>
+<div class="foot"><p class="ft"><b>Вывод:</b> возможна рецепция обязательной пробации при условном осуждении или замене наказания — с гарантиями прав и свобод.</p></div>
+<aside>Во всех трёх странах пробация назначается судом и сочетает контроль с помощью. Для России интересна модель обязательной пробации при условном осуждении, но только при надёжных гарантиях прав осуждённого.</aside>
+</section>
+<section id="q5" data-transition="fade">
+<div class="stack">
+<p class="eyebrow">ВОПРОС 5 ИЗ 8</p>
+<h2>Межведомственное взаимодействие</h2>
+<p class="thesis">Без детального регламента помощь осуждённому распадается на фрагменты.</p>
+<div class="chain">
+<div class="links">
+<div class="cn"><p class="cnt">Осуждённый</p></div>
+<x-connector class="gap-link" head="none"></x-connector>
+<div class="cn key"><p class="cnt">УИИ</p></div>
+<x-connector class="gap-link" head="none"></x-connector>
+<div class="cn"><p class="cnt">Служба занятости</p></div>
+<x-connector class="gap-link" head="none"></x-connector>
+<div class="cn"><p class="cnt">Соцзащита</p></div>
+<x-connector class="gap-link" head="none"></x-connector>
+<div class="cn"><p class="cnt">НКО</p></div>
+</div>
+<p class="chain-cap">Пунктир — связи без регламента. <b>Вывод:</b> нужны подзаконные акты о взаимодействии и единая информационная система.</p>
+</div>
+<div class="cards mt">
+<div class="card"><p class="num">01</p><p class="txt">Нет единых стандартов обмена информацией между УИИ, службами занятости и соцзащитой.</p></div>
+<div class="card d2"><p class="num">02</p><p class="txt">Не определены сроки и формы реагирования на запросы.</p></div>
+<div class="card d3"><p class="num">03</p><p class="txt">У УИИ нет полномочий обязать другие органы исполнить мероприятия программы.</p></div>
+</div>
+</div>
+<aside>Закон называет много субъектов пробации, но не говорит, как именно они должны работать вместе. Без сроков, форм и ответственности помощь осуждённому распадается на отдельные несвязанные действия.</aside>
+</section>
+<section id="q6" class="deep" data-transition="fade">
+<div class="two">
+<div class="col">
+<p class="eyebrow inv">ВОПРОС 6 ИЗ 8</p>
+<h2>Цифровой учёт</h2>
+<p class="thesis">Правовой режим Единого реестра лиц, к которым применяется пробация, требует детализации.</p>
+<div class="issues">
+<div class="iss"><p class="n">1</p><p class="t">Реестр должен отвечать ФЗ № 152‑ФЗ: конфиденциальность, разграничение и защита доступа.</p></div>
+<div class="iss"><p class="n">2</p><p class="t">Не урегулированы сроки хранения, актуализации и уничтожения данных, ответственность за утечки.</p></div>
+<div class="iss"><p class="n">3</p><p class="t">Интеграция с другими госинформсистемами требует дополнительных гарантий.</p></div>
+</div>
+</div>
+<div class="rec">
+<div class="rec-h"><p class="rh">ЕДИНЫЙ РЕЕСТР · ЗАПИСЬ</p></div>
+<div class="row"><p class="k">ФИО</p><div class="redact"></div></div>
+<div class="row"><p class="k">Статус</p><p class="tag ok">пробация</p></div>
+<div class="row"><p class="k">Доступ</p><p class="tag">не детализирован</p></div>
+<div class="row"><p class="k">Срок хранения</p><p class="tag">не урегулирован</p></div>
+<div class="row"><p class="k">Уничтожение</p><p class="tag">не урегулировано</p></div>
+<div class="row"><p class="k">Обмен с ГИС</p><p class="tag">нужны гарантии</p></div>
+<div class="row"><p class="k">Утечка данных</p><p class="tag">ответственность?</p></div>
+<div class="rec-f"><p class="rf">Вывод: нужны регламенты ведения реестра и протоколы обмена данными.</p></div>
+</div>
+</div>
+<aside>Реестр содержит чувствительные сведения о судимости, здоровье и социальном положении. Без чётких правил хранения и доступа он создаёт риск утечек и повторной стигматизации. Справа — условная карточка записи: подсвечены поля, режим которых не урегулирован.</aside>
+</section>
+<section id="q7" data-transition="fade">
+<div class="stack">
+<p class="eyebrow">ВОПРОС 7 ИЗ 8</p>
+<h2>Пенитенциарная десоциализация</h2>
+<p class="thesis">Изоляция разрушает то, что потом должна восстанавливать пробация.</p>
+<div class="tl">
+<div class="st s1"><p class="sl">ЭТАП 1</p><p class="sn">Осуждение</p></div>
+<div class="st s2 d2"><p class="sl">ЭТАП 2</p><p class="sn">Изоляция в ИУ</p></div>
+<div class="st s3 d3"><p class="sl">ЭТАП 3</p><p class="sn">Освобождение</p></div>
+<div class="st s4 d4"><p class="sl">ЭТАП 4</p><p class="sn">Пробация</p></div>
+</div>
+<p class="eyebrow mt">ЧТО ТЕРЯЕТСЯ В ИЗОЛЯЦИИ</p>
+<div class="losses">
+<div class="loss"><p class="lt">Связи</p><p class="ld">Ограничение контактов с семьёй и внешним миром разрушает социально полезные связи.</p></div>
+<div class="loss d2"><p class="lt">Нормы</p><p class="ld">Альтернативные нормы поведения, усвоенные в ИУ, мешают адаптации на свободе.</p></div>
+<div class="loss d3"><p class="lt">Навыки</p><p class="ld">Мало доступа к образованию, профподготовке и труду — ниже шансы на рынке труда.</p></div>
+</div>
+</div>
+<div class="band"><p class="band-label">Вывод</p><p class="band-text">Пробация должна компенсировать последствия режима интенсивными программами восстановления социальных навыков.</p></div>
+<aside>Чем дольше и жёстче изоляция, тем больше человек теряет связей и навыков. Постпенитенциарная пробация начинает работу с уже накопленным ущербом, поэтому её программы должны быть интенсивными.</aside>
+</section>
+<section id="q8" data-transition="fade">
+<div class="stack">
+<p class="eyebrow">ВОПРОС 8 ИЗ 8</p>
+<h2>Пробация и освобождение</h2>
+<p class="thesis">Пробация должна стать самостоятельным средством исправления в УИК РФ.</p>
+<p class="eyebrow mt">СРЕДСТВА ИСПРАВЛЕНИЯ · СТ. 9 УИК РФ</p>
+<div class="tiles">
+<div class="tile"><p class="tt">Режим</p></div>
+<div class="tile"><p class="tt">Воспитательная работа</p></div>
+<div class="tile"><p class="tt">Общественно полезный труд</p></div>
+<div class="tile"><p class="tt">Общее образование</p></div>
+<div class="tile"><p class="tt">Профобучение и общественное воздействие</p></div>
+<div class="tile new"><p class="plus">+</p><p class="tt">Мероприятия пробации</p></div>
+</div>
+<div class="steps">
+<div class="step"><p class="sp">Закрепить в УИК РФ как средство исправления</p></div>
+<x-connector class="arrow" head="end"></x-connector>
+<div class="step d2"><p class="sp">Учитывать при УДО и замене наказания</p></div>
+<x-connector class="arrow" head="end"></x-connector>
+<div class="step d3"><p class="sp">Ввести критерии эффективности и контроль</p></div>
+</div>
+</div>
+<div class="band"><p class="band-label">Вывод</p><p class="band-text">Пробация — полноценный элемент исправительного воздействия, а не только социальная помощь.</p></div>
+<aside>Сейчас пробация существует параллельно с системой средств исправления из статьи 9 УИК РФ. Если добавить её туда и связать с УДО, у осуждённого появится реальный стимул проходить программу.</aside>
+</section>
+<section id="itogi" class="dark" data-transition="fade">
+<div class="main">
+<div>
+<p class="eyebrow inv">ИТОГИ</p>
+<h2>Предложения по совершенствованию</h2>
+</div>
+<div class="cards rows">
+<div class="card"><p class="num">01</p><p class="txt">Гармонизировать терминологию УИК РФ и ФЗ № 10‑ФЗ.</p></div>
+<div class="card d2"><p class="num">02</p><p class="txt">Дополнить заявительный порядок проактивной помощью уязвимым категориям.</p></div>
+<div class="card d3"><p class="num">03</p><p class="txt">Воспринять опыт обязательной пробации при условном осуждении — с гарантиями прав.</p></div>
+<div class="card"><p class="num">04</p><p class="txt">Принять регламенты межведомственного взаимодействия.</p></div>
+<div class="card d2"><p class="num">05</p><p class="txt">Детализировать режим Единого реестра и защиту данных.</p></div>
+<div class="card d3"><p class="num">06</p><p class="txt">Закрепить пробацию в УИК РФ как средство исправления и учитывать её при УДО.</p></div>
+</div>
+</div>
+<aside>Подводя итог: пробация — перспективный, но пока недостаточно встроенный в уголовно‑исполнительное законодательство институт. Шесть предложений направлены на согласование норм, расширение охвата и защиту прав осуждённых.</aside>
+</section>
+<section id="sources" data-transition="fade">
+<div class="topband">
+<h2>Нормативная база</h2>
+</div>
+<div class="srcs">
+<div class="src"><p class="n">1</p><p class="t">Федеральный закон от 06.02.2023 № 10‑ФЗ «О пробации в Российской Федерации».</p></div>
+<div class="src"><p class="n">2</p><p class="t">Уголовно‑исполнительный кодекс Российской Федерации от 08.01.1997 № 1‑ФЗ.</p></div>
+<div class="src"><p class="n">3</p><p class="t">Федеральный закон от 27.07.2006 № 152‑ФЗ «О персональных данных».</p></div>
+</div>
+<div class="thanks"><p class="tx">Спасибо за внимание!</p></div>
+<aside>Основные источники выступления. Готов(а) ответить на вопросы.</aside>
+</section>
+</div>
+<div id="hint">← → / клик — листать · F — во весь экран</div>
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const mk = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+// x-connector is a Slides element; draw it as an SVG line here.
+document.querySelectorAll('x-connector').forEach(c => {
+  const cs = getComputedStyle(c);
+  const dash = cs.borderTopStyle === 'dashed' ? '10 8' : '';
+  const line = { stroke: cs.color, 'stroke-width': 3, 'stroke-dasharray': dash };
+  const svg = mk('svg', { style: 'position:absolute;left:0;top:0;overflow:visible;pointer-events:none' });
+  let x1, y1, x2, y2;
+  if (c.hasAttribute('x1')) {
+    [x1, y1, x2, y2] = ['x1', 'y1', 'x2', 'y2'].map(a => +c.getAttribute(a));
+    c.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0';
+  } else {
+    c.style.position = 'relative';
+    x1 = 6; y1 = 1; x2 = c.offsetWidth - 6; y2 = 1;
+  }
+  svg.appendChild(mk('line', { x1, y1, x2, y2, ...line }));
+  if (c.getAttribute('head') === 'end') {
+    svg.appendChild(mk('polygon', { points: `${x2},${y2} ${x2 - 16},${y2 - 9} ${x2 - 16},${y2 + 9}`, fill: cs.color }));
+  }
+  c.appendChild(svg);
+});
+
+const slides = [...document.querySelectorAll('#stage > section')];
+let i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(7)) || 1) - 1));
+function show(n) {
+  i = Math.max(0, Math.min(slides.length - 1, n));
+  slides.forEach((s, k) => s.classList.toggle('on', k === i));
+  history.replaceState(null, '', '#slide-' + (i + 1));
+}
+function fit() {
+  const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+  document.getElementById('stage').style.transform = `scale(${k}) translate(-50%, -50%)`;
+}
+addEventListener('resize', fit);
+addEventListener('keydown', e => {
+  if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(i + 1);
+  if (['ArrowLeft', 'PageUp'].includes(e.key)) show(i - 1);
+  if (e.key === 'Home') show(0);
+  if (e.key === 'End') show(slides.length - 1);
+  if (e.key === 'f' || e.key === 'а') document.documentElement.requestFullscreen?.();
+});
+addEventListener('click', e => show(e.clientX < innerWidth / 3 ? i - 1 : i + 1));
+fit(); show(i);
+</script>
+</body>
+</html>
